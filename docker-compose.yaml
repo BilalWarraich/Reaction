@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  reaction:
+    build:
+      context: .
+      dockerfile: ./reaction/app.dockerfile
+    depends_on:
+      - reaction_db
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@reaction_db/reactions?sslmode=disable
+    restart: on-failure
+
+  graphql:
+    build:
+      context: .
+      dockerfile: ./graphql/app.dockerfile
+    ports:
+      - 8000:8080
+    depends_on:
+      - reaction
+    environment:
+      REACTION_SERVICE_URL: reaction:8080
+    restart: on-failure
+
+  reaction_db:
+    build:
+      context: ./reaction
+      dockerfile: ./db.dockerfile
+    environment:
+      POSTGRES_DB: reactions
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: unless-stopped
+
+
+
+

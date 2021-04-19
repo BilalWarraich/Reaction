@@ -1,0 +1,129 @@
+syntax = "proto3";
+option go_package = "/";
+package pb;
+
+message ReactionTypes {
+    string id = 1;
+    string reacts = 2;
+}
+
+message PostReactionTypesRequest {
+    string reacts = 1;
+}
+
+message PostReactionTypesResponse {
+    ReactionTypes reactionTypes = 1;
+}
+
+message GetReactionTypeIDRequest {
+    string id = 1;
+}
+
+message GetReactionTypeIDResponse {
+    ReactionTypes reactionTypes = 1;
+}
+
+message GetReactionTypesRequest {
+
+}
+
+message GetReactionTypesResponse {
+    repeated ReactionTypes reactionTypes = 1;
+}
+
+message Reactions {
+    string id = 1;
+    string reactType = 2;
+    string postId = 3;
+    string userId = 4;
+
+}
+
+message PostReactionsRequest {
+    string reactType = 1;
+    string postId = 2;
+    string userId = 3;
+
+}
+
+message PostReactionsResponse {
+    Reactions reactions = 1;
+}
+
+message GetUserByPostIDRequest {
+    string postId = 1;
+    string reactType = 2;
+}
+
+message GetUserByPostIDResponse {
+    repeated Reactions reactions = 1;
+}
+
+message DeleteReactionByPostIDRequest {
+    string postId = 1;
+}
+
+message DeleteReactionByPostIDResponse {
+       string ok= 1;
+}
+
+message DeleteReactionByUserPostIDRequest {
+    string postId = 1;
+    string userId = 2;
+}
+
+message DeleteReactionByUserPostIDResponse {
+       string ok= 1;
+}
+
+message UpdateReactionsRequest {
+    string reactType = 1;
+    string postId = 2;
+    string userId = 3;
+
+}
+
+message UpdateReactionsResponse {
+    Reactions reactions = 1;
+}
+
+message TotalReactionCountRequest {
+    string postId = 1;
+}
+
+message TotalReactionCountResponse {
+       string count= 1;
+}
+
+message ReactionCountByTypeRequest {
+    string postId = 1;
+    string reactType= 2;
+}
+
+message ReactionCountByTypeResponse {
+       string count= 1;
+}
+
+service ReactionService {
+    rpc PostReactionTypes (PostReactionTypesRequest) returns (PostReactionTypesResponse) {
+    }
+    rpc GetReactionTypeID (GetReactionTypeIDRequest) returns (GetReactionTypeIDResponse) {
+    }
+    rpc GetReactionTypes (GetReactionTypesRequest) returns (GetReactionTypesResponse) {
+    }
+    rpc PostReactions (PostReactionsRequest) returns (PostReactionsResponse) {
+    }
+    rpc GetUserByPostID (GetUserByPostIDRequest) returns (GetUserByPostIDResponse) {
+    }
+    rpc DeleteReactionByPostID (DeleteReactionByPostIDRequest) returns (DeleteReactionByPostIDResponse) {
+    }
+    rpc DeleteReactionByUserPostID (DeleteReactionByUserPostIDRequest) returns (DeleteReactionByUserPostIDResponse) {
+    }
+    rpc UpdateReactions (UpdateReactionsRequest) returns (UpdateReactionsResponse) {
+    }
+    rpc TotalReactionCount (TotalReactionCountRequest) returns (TotalReactionCountResponse) {
+    }
+    rpc ReactionCountByType (ReactionCountByTypeRequest) returns (ReactionCountByTypeResponse) {
+    }
+    
+}

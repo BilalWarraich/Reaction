@@ -1,0 +1,8 @@
+schema: schema.graphql
+
+models:
+  Reaction:
+    model: github.com/Reaction/graphql.Reaction
+    fields:
+      orders:
+        resolver: true

@@ -1,0 +1,137 @@
+scalar Time
+
+type ReactionTypes {
+  id: String!
+  reacts: String!
+}
+
+type Reactions {
+  id: String!
+  reactType: String!
+  postId: String!
+  userId: String!
+}
+
+input ReactionTypesInput {
+  reacts: String!
+}
+
+input ReactionsInput {
+  reactType: String!
+  postId: String!
+  userId: String!
+}
+
+
+type Mutation {
+
+"""
+An API To add new reactions Types in our system e.g LIKE,HAHA,ANGRY. If need to add more this the api.
+mutation {
+  createReactionTypes(reactionTypes: {reacts: "HAHA"}) {
+    id
+    reacts
+  }
+}
+"""
+  createReactionTypes(reactionTypes: ReactionTypesInput!): ReactionTypes
+
+"""
+Add a user reaction on a post.
+mutation {
+  createReactions(reactions: {reactType: "HAHA",postId:"01",userId:"02"}) {
+    id
+    reactType
+    postId
+    userId
+  }
+}
+"""
+  createReactions(reactions: ReactionsInput!): Reactions
+
+
+"""
+Update The Reaction of a user e.g if we changes it from like to angry.
+mutation {
+  updateReactions(reactions: {reactType: "HAHA",postId:"01",userId:"02"}) {
+    id
+    reactType
+    postId
+    userId
+  }
+}
+"""
+  updateReactions(reactions: ReactionsInput!): Reactions
+
+"""
+Delete the reactions from db if a certain post is deleted.
+mutation {
+  deleteReactionByPostID(postId:"01") 
+}
+"""
+  deleteReactionByPostID(postId: String):String
+
+
+"""
+Delete the reactions from db if a certain user removes his Reaction.
+mutation {
+  deleteReactionByUserPostIDRequest(postId:"01",userId:"02") 
+}
+""" 
+  deleteReactionByUserPostIDRequest(postId:String, userId:String):String
+
+
+
+
+}
+
+type Query {
+"""
+Returns All the Reaction Type We have availble or we added in our db 
+
+query{
+  reactionTypes(
+  id:null){reacts
+    
+  }
+}
+"""
+  reactionTypes(id: String): [ReactionTypes!]!
+
+"""
+Returns All the users on post by the type of reaction they added
+query{
+  getUserByPostId(
+  postId:"01",
+  reactType:"HAHA"){
+    id
+    userId
+  }
+}
+"""
+
+  getUserByPostId(postId: String, reactType: String): [Reactions!]!
+
+"""
+Returns Total Reaction Count on a post by Post id
+query{
+  totalReactionCount(
+  postId:"01")
+}
+
+"""
+  totalReactionCount(postId:String):String
+
+"""
+Returns the Count By Type of reaction on a post
+query{
+  reactionCountByType(
+  postId:"01",
+  reactType:"HAHA")
+}
+"""
+
+  reactionCountByType(postId:String, reactType:String):String
+
+
+}
