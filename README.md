@@ -1,9 +1,3 @@
-# Spidey
-
-Online store based on microservices and GraphQL.
-
-The underlying source code for the article [Using GraphQL API Gateway for Microservices in Go](https://outcrawl.com/go-graphql-gateway-microservices).
-
 ## Build
 
 ```
