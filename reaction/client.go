@@ -34,7 +34,7 @@ func (c *Client) PostReactionTypes(ctx context.Context, reacts string) (*Reactio
 		return nil, err
 	}
 	return &ReactionTypes{
-		ID:   r.ReactionTypes.Id,
+		ID:     r.ReactionTypes.Id,
 		Reacts: r.ReactionTypes.Reacts,
 	}, nil
 }
@@ -48,7 +48,7 @@ func (c *Client) GetReactionTypeID(ctx context.Context, id string) (*ReactionTyp
 		return nil, err
 	}
 	return &ReactionTypes{
-		ID:   r.ReactionTypes.Id,
+		ID:     r.ReactionTypes.Id,
 		Reacts: r.ReactionTypes.Reacts,
 	}, nil
 }
@@ -56,9 +56,7 @@ func (c *Client) GetReactionTypeID(ctx context.Context, id string) (*ReactionTyp
 func (c *Client) GetReactionTypes(ctx context.Context) ([]ReactionTypes, error) {
 	r, err := c.service.GetReactionTypes(
 		ctx,
-		&pb.GetReactionTypesRequest{
-
-		},
+		&pb.GetReactionTypesRequest{},
 	)
 	if err != nil {
 		return nil, err
@@ -66,7 +64,7 @@ func (c *Client) GetReactionTypes(ctx context.Context) ([]ReactionTypes, error) 
 	reactionTypes := []ReactionTypes{}
 	for _, a := range r.ReactionTypes {
 		reactionTypes = append(reactionTypes, ReactionTypes{
-			ID:   a.Id,
+			ID:     a.Id,
 			Reacts: a.Reacts,
 		})
 	}
@@ -82,11 +80,10 @@ func (c *Client) PostReactions(ctx context.Context, reactType string, postId str
 		return nil, err
 	}
 	return &Reactions{
-		ID:   r.Reactions.Id,
+		ID:        r.Reactions.Id,
 		ReactType: r.Reactions.ReactType,
-		PostId: r.Reactions.PostId,
-		UserId: r.Reactions.UserId,
-
+		PostId:    r.Reactions.PostId,
+		UserId:    r.Reactions.UserId,
 	}, nil
 }
 
@@ -101,8 +98,27 @@ func (c *Client) GetUserByPostID(ctx context.Context, postId string, reactType s
 	reactionTypes := []Reactions{}
 	for _, a := range r.Reactions {
 		reactionTypes = append(reactionTypes, Reactions{
-			ID:   a.Id,
+			ID:     a.Id,
 			UserId: a.UserId,
+		})
+	}
+	return reactionTypes, nil
+}
+
+func (c *Client) GetReactByUserID(ctx context.Context, userId string) ([]Reactions, error) {
+	r, err := c.service.GetReactByUserID(
+		ctx,
+		&pb.GetReactByUserIDRequest{UserId: userId},
+	)
+	if err != nil {
+		return nil, err
+	}
+	reactionTypes := []Reactions{}
+	for _, a := range r.Reactions {
+		reactionTypes = append(reactionTypes, Reactions{
+			ID:        a.Id,
+			PostId:    a.PostId,
+			ReactType: a.ReactType,
 		})
 	}
 	return reactionTypes, nil
@@ -116,7 +132,7 @@ func (c *Client) DeleteReactionByPostID(ctx context.Context, postId string) (str
 	if err != nil {
 		return "", err
 	}
-	return r.Ok ,nil
+	return r.Ok, nil
 }
 
 func (c *Client) DeleteReactionByUserPostID(ctx context.Context, postId string, userId string) (string, error) {
@@ -127,7 +143,7 @@ func (c *Client) DeleteReactionByUserPostID(ctx context.Context, postId string, 
 	if err != nil {
 		return "", err
 	}
-	return r.Ok ,nil
+	return r.Ok, nil
 }
 
 func (c *Client) UpdateReactions(ctx context.Context, reactType string, postId string, userId string) (*Reactions, error) {
@@ -139,11 +155,10 @@ func (c *Client) UpdateReactions(ctx context.Context, reactType string, postId s
 		return nil, err
 	}
 	return &Reactions{
-		ID:   r.Reactions.Id,
+		ID:        r.Reactions.Id,
 		ReactType: r.Reactions.ReactType,
-		PostId: r.Reactions.PostId,
-		UserId: r.Reactions.UserId,
-
+		PostId:    r.Reactions.PostId,
+		UserId:    r.Reactions.UserId,
 	}, nil
 }
 
@@ -155,7 +170,7 @@ func (c *Client) TotalReactionCount(ctx context.Context, postId string) (string,
 	if err != nil {
 		return "", err
 	}
-	return r.Count ,nil
+	return r.Count, nil
 }
 
 func (c *Client) ReactionCountByType(ctx context.Context, postId string, reactType string) (string, error) {
@@ -166,5 +181,5 @@ func (c *Client) ReactionCountByType(ctx context.Context, postId string, reactTy
 	if err != nil {
 		return "", err
 	}
-	return r.Count ,nil
+	return r.Count, nil
 }

@@ -3,6 +3,7 @@
 package main
 
 
+
 type ReactionTypesInput struct {
 	Reacts string `json:"reacts"`
 }

@@ -51,6 +51,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		GetReactByUserID    func(childComplexity int, userID *string) int
 		GetUserByPostID     func(childComplexity int, postID *string, reactType *string) int
 		ReactionCountByType func(childComplexity int, postID *string, reactType *string) int
 		ReactionTypes       func(childComplexity int, id *string) int
@@ -80,6 +81,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	ReactionTypes(ctx context.Context, id *string) ([]*ReactionTypes, error)
 	GetUserByPostID(ctx context.Context, postID *string, reactType *string) ([]*Reactions, error)
+	GetReactByUserID(ctx context.Context, userID *string) ([]*Reactions, error)
 	TotalReactionCount(ctx context.Context, postID *string) (*string, error)
 	ReactionCountByType(ctx context.Context, postID *string, reactType *string) (*string, error)
 }
@@ -158,6 +160,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateReactions(childComplexity, args["reactions"].(ReactionsInput)), true
+
+	case "Query.GetReactByUserID":
+		if e.complexity.Query.GetReactByUserID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_GetReactByUserID_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetReactByUserID(childComplexity, args["userId"].(*string)), true
 
 	case "Query.getUserByPostId":
 		if e.complexity.Query.GetUserByPostID == nil {
@@ -425,6 +439,21 @@ query{
 
   getUserByPostId(postId: String, reactType: String): [Reactions!]!
 
+
+"""
+Returns reactions on post by userId
+query{
+  GetReactByUserID(
+  userId:"01"){
+    id
+    postId
+    reactType
+  }
+}
+"""
+
+  GetReactByUserID(userId: String): [Reactions!]!
+
 """
 Returns Total Reaction Count on a post by Post id
 query{
@@ -530,6 +559,20 @@ func (ec *executionContext) field_Mutation_updateReactions_args(ctx context.Cont
 		}
 	}
 	args["reactions"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_GetReactByUserID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["userId"]; ok {
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg0
 	return args, nil
 }
 
@@ -931,6 +974,50 @@ func (ec *executionContext) _Query_getUserByPostId(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GetUserByPostID(rctx, args["postId"].(*string), args["reactType"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Reactions)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNReactions2ᚕᚖgithubᚗcomᚋReactionᚋgraphqlᚐReactionsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_GetReactByUserID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_GetReactByUserID_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetReactByUserID(rctx, args["userId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2608,6 +2695,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getUserByPostId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "GetReactByUserID":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_GetReactByUserID(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

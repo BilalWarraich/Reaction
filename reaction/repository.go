@@ -15,6 +15,7 @@ type Repository interface {
 	GetReactionTypes(ctx context.Context) ([]ReactionTypes, error)
 	PostReactions(ctx context.Context, a Reactions) error
 	GetUserByPostID(ctx context.Context, postId string, reactType string) ([]Reactions, error)
+	GetReactByUserID(ctx context.Context, postId string) ([]Reactions, error)
 	DeleteReactionByPostID(ctx context.Context, postId string) error
 	DeleteReactionByUserPostIDRequest(ctx context.Context, postId string, userId string) error
 	UpdateReactions(ctx context.Context, a Reactions) error
@@ -112,6 +113,30 @@ func (r *postgresRepository) GetUserByPostID(ctx context.Context, postId string,
 	for rows.Next() {
 		a := &Reactions{}
 		if err = rows.Scan(&a.ID, &a.UserId); err == nil {
+			reactionTypes = append(reactionTypes, *a)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return reactionTypes, nil
+
+}
+
+func (r *postgresRepository) GetReactByUserID(ctx context.Context, userId string) ([]Reactions, error) {
+	rows, err := r.db.QueryContext(
+		ctx,
+		"SELECT id, postId, reactionType FROM reactions WHERE userId = $1", userId)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	reactionTypes := []Reactions{}
+	for rows.Next() {
+		a := &Reactions{}
+		if err = rows.Scan(&a.ID, &a.PostId, &a.ReactType); err == nil {
 			reactionTypes = append(reactionTypes, *a)
 		}
 	}

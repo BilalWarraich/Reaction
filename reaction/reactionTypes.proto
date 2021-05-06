@@ -59,6 +59,14 @@ message GetUserByPostIDResponse {
     repeated Reactions reactions = 1;
 }
 
+message GetReactByUserIDRequest {
+    string userId = 1;
+}
+
+message GetReactByUserIDResponse {
+    repeated Reactions reactions = 1;
+}
+
 message DeleteReactionByPostIDRequest {
     string postId = 1;
 }
@@ -115,6 +123,8 @@ service ReactionService {
     }
     rpc GetUserByPostID (GetUserByPostIDRequest) returns (GetUserByPostIDResponse) {
     }
+    rpc GetReactByUserID (GetReactByUserIDRequest) returns (GetReactByUserIDResponse) {
+    }
     rpc DeleteReactionByPostID (DeleteReactionByPostIDRequest) returns (DeleteReactionByPostIDResponse) {
     }
     rpc DeleteReactionByUserPostID (DeleteReactionByUserPostIDRequest) returns (DeleteReactionByUserPostIDResponse) {
@@ -125,5 +135,6 @@ service ReactionService {
     }
     rpc ReactionCountByType (ReactionCountByTypeRequest) returns (ReactionCountByTypeResponse) {
     }
+
     
 }

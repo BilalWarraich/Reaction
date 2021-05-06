@@ -70,6 +70,31 @@ func (r *queryResolver) GetUserByPostID(ctx context.Context, postId *string, rea
 	return accounts, nil
 }
 
+func (r *queryResolver) GetReactByUserID(ctx context.Context, userId *string) ([]*Reactions, error) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+
+
+	accountList, err := r.server.accountClient.GetReactByUserID(ctx, *userId)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	var accounts []*Reactions
+	for _, a := range accountList {
+		account := &Reactions{
+			ID:   a.ID,
+			PostID: a.PostId,
+			ReactType: a.ReactType,
+		}
+		accounts = append(accounts, account)
+	}
+
+	return accounts, nil
+}
+
 func (r *queryResolver) TotalReactionCount(ctx context.Context, postId *string) (*string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()

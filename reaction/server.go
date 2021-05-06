@@ -100,6 +100,25 @@ func (s *grpcServer) GetUserByPostID(ctx context.Context, r *pb.GetUserByPostIDR
 	return &pb.GetUserByPostIDResponse{Reactions : reactionTypes}, nil
 }
 
+func (s *grpcServer) GetReactByUserID(ctx context.Context, r *pb.GetReactByUserIDRequest) (*pb.GetReactByUserIDResponse, error) {
+	res, err := s.service.GetReactByUserID(ctx, r.UserId)
+	if err != nil {
+		return nil, err
+	}
+	reactionTypes := []*pb.Reactions{}
+	for _, p := range res {
+		reactionTypes = append(
+			reactionTypes,
+			&pb.Reactions{
+				Id:   p.ID,
+				PostId: p.PostId,
+				ReactType: p.ReactType,
+			},
+		)
+	}
+	return &pb.GetReactByUserIDResponse{Reactions : reactionTypes}, nil
+}
+
 func (s *grpcServer) DeleteReactionByPostID(ctx context.Context, r *pb.DeleteReactionByPostIDRequest) (*pb.DeleteReactionByPostIDResponse, error) {
 	a, err := s.service.DeleteReactionByPostID(ctx, r.PostId)
 	if err != nil {

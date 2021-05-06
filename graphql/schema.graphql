@@ -112,6 +112,21 @@ query{
 
   getUserByPostId(postId: String, reactType: String): [Reactions!]!
 
+
+"""
+Returns reactions on post by userId
+query{
+  GetReactByUserID(
+  userId:"01"){
+    id
+    postId
+    reactType
+  }
+}
+"""
+
+  GetReactByUserID(userId: String): [Reactions!]!
+
 """
 Returns Total Reaction Count on a post by Post id
 query{

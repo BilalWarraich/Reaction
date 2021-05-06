@@ -23,6 +23,7 @@ type ReactionServiceClient interface {
 	GetReactionTypes(ctx context.Context, in *GetReactionTypesRequest, opts ...grpc.CallOption) (*GetReactionTypesResponse, error)
 	PostReactions(ctx context.Context, in *PostReactionsRequest, opts ...grpc.CallOption) (*PostReactionsResponse, error)
 	GetUserByPostID(ctx context.Context, in *GetUserByPostIDRequest, opts ...grpc.CallOption) (*GetUserByPostIDResponse, error)
+	GetReactByUserID(ctx context.Context, in *GetReactByUserIDRequest, opts ...grpc.CallOption) (*GetReactByUserIDResponse, error)
 	DeleteReactionByPostID(ctx context.Context, in *DeleteReactionByPostIDRequest, opts ...grpc.CallOption) (*DeleteReactionByPostIDResponse, error)
 	DeleteReactionByUserPostID(ctx context.Context, in *DeleteReactionByUserPostIDRequest, opts ...grpc.CallOption) (*DeleteReactionByUserPostIDResponse, error)
 	UpdateReactions(ctx context.Context, in *UpdateReactionsRequest, opts ...grpc.CallOption) (*UpdateReactionsResponse, error)
@@ -83,6 +84,15 @@ func (c *reactionServiceClient) GetUserByPostID(ctx context.Context, in *GetUser
 	return out, nil
 }
 
+func (c *reactionServiceClient) GetReactByUserID(ctx context.Context, in *GetReactByUserIDRequest, opts ...grpc.CallOption) (*GetReactByUserIDResponse, error) {
+	out := new(GetReactByUserIDResponse)
+	err := c.cc.Invoke(ctx, "/pb.ReactionService/GetReactByUserID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *reactionServiceClient) DeleteReactionByPostID(ctx context.Context, in *DeleteReactionByPostIDRequest, opts ...grpc.CallOption) (*DeleteReactionByPostIDResponse, error) {
 	out := new(DeleteReactionByPostIDResponse)
 	err := c.cc.Invoke(ctx, "/pb.ReactionService/DeleteReactionByPostID", in, out, opts...)
@@ -137,6 +147,7 @@ type ReactionServiceServer interface {
 	GetReactionTypes(context.Context, *GetReactionTypesRequest) (*GetReactionTypesResponse, error)
 	PostReactions(context.Context, *PostReactionsRequest) (*PostReactionsResponse, error)
 	GetUserByPostID(context.Context, *GetUserByPostIDRequest) (*GetUserByPostIDResponse, error)
+	GetReactByUserID(context.Context, *GetReactByUserIDRequest) (*GetReactByUserIDResponse, error)
 	DeleteReactionByPostID(context.Context, *DeleteReactionByPostIDRequest) (*DeleteReactionByPostIDResponse, error)
 	DeleteReactionByUserPostID(context.Context, *DeleteReactionByUserPostIDRequest) (*DeleteReactionByUserPostIDResponse, error)
 	UpdateReactions(context.Context, *UpdateReactionsRequest) (*UpdateReactionsResponse, error)
@@ -163,6 +174,9 @@ func (UnimplementedReactionServiceServer) PostReactions(context.Context, *PostRe
 }
 func (UnimplementedReactionServiceServer) GetUserByPostID(context.Context, *GetUserByPostIDRequest) (*GetUserByPostIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserByPostID not implemented")
+}
+func (UnimplementedReactionServiceServer) GetReactByUserID(context.Context, *GetReactByUserIDRequest) (*GetReactByUserIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetReactByUserID not implemented")
 }
 func (UnimplementedReactionServiceServer) DeleteReactionByPostID(context.Context, *DeleteReactionByPostIDRequest) (*DeleteReactionByPostIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteReactionByPostID not implemented")
@@ -278,6 +292,24 @@ func _ReactionService_GetUserByPostID_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ReactionServiceServer).GetUserByPostID(ctx, req.(*GetUserByPostIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReactionService_GetReactByUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReactByUserIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReactionServiceServer).GetReactByUserID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.ReactionService/GetReactByUserID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReactionServiceServer).GetReactByUserID(ctx, req.(*GetReactByUserIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -398,6 +430,10 @@ var ReactionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserByPostID",
 			Handler:    _ReactionService_GetUserByPostID_Handler,
+		},
+		{
+			MethodName: "GetReactByUserID",
+			Handler:    _ReactionService_GetReactByUserID_Handler,
 		},
 		{
 			MethodName: "DeleteReactionByPostID",
